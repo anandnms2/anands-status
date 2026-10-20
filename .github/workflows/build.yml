@@ -24,11 +24,19 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Resolve Beszel version (workflow input, else the pin in Dockerfile)
+        id: ref
+        run: |
+          REF="${{ inputs.beszel_ref }}"
+          [ -n "$REF" ] || REF=$(grep -m1 '^ARG BESZEL_REF=' Dockerfile | cut -d= -f2)
+          echo "ref=$REF" >> "$GITHUB_OUTPUT"
       - uses: docker/build-push-action@v6
         with:
           context: .
           push: true
           platforms: linux/amd64
           build-args: |
-            BESZEL_REF=${{ inputs.beszel_ref || 'v0.21.0' }}
-          tags: ghcr.io/anandnms2/anands-status:latest
+            BESZEL_REF=${{ steps.ref.outputs.ref }}
+          tags: |
+            ghcr.io/anandnms2/anands-status:latest
+            ghcr.io/anandnms2/anands-status:${{ steps.ref.outputs.ref }}

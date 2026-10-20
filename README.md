@@ -18,10 +18,13 @@ Every patch asserts it matched, so an upstream change fails the build instead of
 3. Save and Deploy. Hard-refresh the browser (and reinstall the PWA to get the new icon).
 4. Rollback: set `image:` back to `henrygd/beszel:latest`.
 
-## Upgrading Beszel
+## Upgrading Beszel (automated weekly; manual steps below)
 Run the workflow manually with `beszel_ref` set to the new tag, or change the default in
 `Dockerfile` and `build.yml`. Keep the agent image on the same version.
 
 ## Not changed on purpose
 Data directory (`beszel_data`), API routes, the `beszel-agent` image and the install snippets
 the "Add system" dialog generates; changing those would break existing agents.
+
+Each build is tagged `:latest` and `:<beszel version>` (for example `:v0.21.0`), so you can roll back
+by pointing the compose `image:` at an older version tag.
